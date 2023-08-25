@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 st.title("Upload a csv and correlate its columns!")
+st.caption("Totally secure. Trust me, bro.")
 
 
 def sanitize_data(df):
@@ -77,8 +78,6 @@ try:
 
         df = pd.read_csv(uploaded_file)
         df = sanitize_data(df)
-
-        st.caption('read csv')
 
         st.dataframe(df)
 
