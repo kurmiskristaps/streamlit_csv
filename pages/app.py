@@ -4,7 +4,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-st.title("Upload a csv and correlate its columns!")
+st.title("Analyze your CSV data!")
 st.caption("Totally secure. Trust me, bro.")
 
 
