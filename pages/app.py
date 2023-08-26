@@ -20,8 +20,6 @@ def sanitize_data(df):
 def display_box_plots(df, selected_columns):
     st.write("Box Plots:")
     for column in selected_columns:
-        st.info(df[column])
-
         try:
             df[column] = pd.to_numeric(df[column], errors='coerce')
         except:
