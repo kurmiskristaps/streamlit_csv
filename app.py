@@ -24,6 +24,8 @@ def convert_to_numeric(column: pd.Series):
 
         if numeric_column.isna().all():
             raise CsvException(f'No processable data in column {column.name}')
+        
+        return numeric_column
     except CsvException:
         raise
     except:
