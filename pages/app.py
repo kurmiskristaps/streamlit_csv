@@ -41,19 +41,20 @@ def display_line_plots(df, selected_columns):
         plt.plot(df[column])
         plt.xlabel("Index")
         plt.ylabel(column)
+        plt.xticks(rotation=90)
         plt.title(f"Line Plot of {column}")
         st.pyplot(plt)
 
 
 def display_scatter_plots(df, selected_columns):
-    st.write("Scatter Plots:")
-    for column in selected_columns:
-        plt.figure(figsize=(8, 6))
-        plt.scatter(df[column], df[selected_columns[0]])
-        plt.xlabel(column)
-        plt.ylabel(selected_columns[0])
-        plt.title(f"Scatter Plot between {column} and {selected_columns[0]}")
-        st.pyplot(plt)
+    st.write("Scatter Plot:")
+    plt.figure(figsize=(8, 6))
+    plt.scatter(df[selected_columns[0]], df[selected_columns[1]])
+    plt.xlabel(selected_columns[0])
+    plt.ylabel(selected_columns[1])
+    plt.xticks(rotation=90)
+    plt.title(f"Scatter Plot between {selected_columns[0]} and {selected_columns[1]}")
+    st.pyplot(plt)
 
 
 def display_histograms(df, selected_columns):
