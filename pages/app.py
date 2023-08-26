@@ -20,6 +20,15 @@ def sanitize_data(df):
 def display_box_plots(df, selected_columns):
     st.write("Box Plots:")
     for column in selected_columns:
+        st.info(df[column])
+
+        try:
+            df[column] = pd.to_numeric(df[column], errors='coerce')
+        except:
+            st.error("Cannot convert to numeric column")
+
+            return
+
         plt.figure(figsize=(8, 6))
         sns.boxplot(x=column, data=df)
         plt.xlabel(column)
@@ -74,38 +83,38 @@ try:
 except UnicodeDecodeError:
     st.error("Something went wrong with the upload. ¯\_(ツ)_/¯")
 
-try:
-    if uploaded_file is not None:
+# try:
+if uploaded_file is not None:
 
-        df = pd.read_csv(uploaded_file)
-        df = sanitize_data(df)
+    df = pd.read_csv(uploaded_file)
+    df = sanitize_data(df)
 
-        st.dataframe(df)
+    st.dataframe(df)
 
-        selected_columns = st.multiselect(
-            'Select collumns for correlation', df.columns)
+    selected_columns = st.multiselect(
+        'Select collumns for correlation', df.columns)
 
-        if len(selected_columns) >= 1:
-            # Data Visualization Options
-            visualization_option = st.selectbox(
-                "Select a visualization option",
-                [
-                    "Box", "Line", "Pair", "Histogram", "Scatter",
-                ]
-            )
+    if len(selected_columns) >= 1:
+        # Data Visualization Options
+        visualization_option = st.selectbox(
+            "Select a visualization option",
+            [
+                "Box", "Line", "Pair", "Histogram", "Scatter",
+            ]
+        )
 
-            if visualization_option == "Box":
-                display_box_plots(df, selected_columns)
-            elif visualization_option == "Pair":
-                display_pair_plots(df, selected_columns)
-            elif visualization_option == "Line":
-                display_line_plots(df, selected_columns)
-            elif visualization_option == "Scatter":
-                display_scatter_plots(df, selected_columns)
-            elif visualization_option == "Histogram":
-                display_histograms(df, selected_columns)
-        else:
-            st.warning("Select at least one column for analysis.")
-except Exception as err:
-    st.error(
-        "Something went wrong. Maybe non-numeric collumns? I havent really data-proofed this much")
+        if visualization_option == "Box":
+            display_box_plots(df, selected_columns)
+        elif visualization_option == "Pair":
+            display_pair_plots(df, selected_columns)
+        elif visualization_option == "Line":
+            display_line_plots(df, selected_columns)
+        elif visualization_option == "Scatter":
+            display_scatter_plots(df, selected_columns)
+        elif visualization_option == "Histogram":
+            display_histograms(df, selected_columns)
+    else:
+        st.warning("Select at least one column for analysis.")
+# except Exception as err:
+#     st.error(
+#         "Something went wrong. Maybe non-numeric collumns? I havent really data-proofed this much")
