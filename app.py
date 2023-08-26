@@ -3,13 +3,14 @@ import re
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
+from typing import List
 from csv_exception import CsvException
 
 st.title("Analyze your CSV data!")
 st.caption("Totally secure. Trust me, bro.")
 
 
-def sanitize_data(df):
+def sanitize_data(df: pd.DataFrame):
     df.columns = df.columns.str.strip()
     df.columns = df.columns.map(lambda x: re.sub(r'\W+', '_', x))
     df.dropna(inplace=True)
@@ -24,7 +25,7 @@ def convert_to_numeric(column: pd.Series):
 
         if numeric_column.isna().all():
             raise CsvException(f'No processable data in column {column.name}')
-        
+
         return numeric_column
     except CsvException:
         raise
@@ -32,7 +33,7 @@ def convert_to_numeric(column: pd.Series):
         raise CsvException("Cannot convert to numeric column")
 
 
-def display_box_plots(df: pd.DataFrame, selected_columns):
+def display_box_plots(df: pd.DataFrame, selected_columns: List[pd.Series]):
     st.write("Box Plots:")
 
     df_copy = df.copy()
@@ -41,14 +42,17 @@ def display_box_plots(df: pd.DataFrame, selected_columns):
         df_copy[column] = convert_to_numeric(df_copy[column])
 
         plt.figure(figsize=(8, 6))
+
         sns.boxplot(x=column, data=df_copy)
+
         plt.xlabel(column)
         plt.ylabel("Value")
         plt.title(f"Box Plot of {column}")
+
         st.pyplot(plt)
 
 
-def display_pair_plots(df: pd.DataFrame, selected_columns):
+def display_pair_plots(df: pd.DataFrame, selected_columns: List[pd.Series]):
     st.write("Pair Plots (Scatter Plot Matrix):")
 
     df_copy = df.copy()
@@ -57,11 +61,13 @@ def display_pair_plots(df: pd.DataFrame, selected_columns):
         df_copy[column] = convert_to_numeric(df_copy[column])
 
     sns.pairplot(df_copy[selected_columns])
+
     st.pyplot(plt)
 
 
-def display_line_plots(df: pd.DataFrame, selected_columns):
+def display_line_plots(df: pd.DataFrame, selected_columns: List[pd.Series]):
     st.write("Line Plots:")
+
     for column in selected_columns:
         plt.figure(figsize=(8, 6))
         plt.plot(df[column])
@@ -69,22 +75,31 @@ def display_line_plots(df: pd.DataFrame, selected_columns):
         plt.ylabel(column)
         plt.xticks(rotation=90)
         plt.title(f"Line Plot of {column}")
+
         st.pyplot(plt)
 
 
-def display_scatter_plots(d: pd.DataFrame, selected_columns):
+def display_scatter_plots(d: pd.DataFrame, selected_columns: List[pd.Series]):
+    if len(selected_columns) != 2:
+        raise CsvException("Select exactly two columns for scatter plot")
+
     st.write("Scatter Plot:")
+
     plt.figure(figsize=(8, 6))
     plt.scatter(df[selected_columns[0]], df[selected_columns[1]])
     plt.xlabel(selected_columns[0])
     plt.ylabel(selected_columns[1])
     plt.xticks(rotation=90)
-    plt.title(f"Scatter Plot between {selected_columns[0]} and {selected_columns[1]}")
+    plt.title(
+        f"Scatter Plot between {selected_columns[0]} and {selected_columns[1]}"
+    )
+
     st.pyplot(plt)
 
 
-def display_histograms(df: pd.DataFrame, selected_columns):
+def display_histograms(df: pd.DataFrame, selected_columns: List[pd.Series]):
     st.write("Histograms:")
+
     for column in selected_columns:
         plt.figure(figsize=(8, 6))
         plt.hist(df[column], bins=df[column].nunique())
@@ -92,6 +107,7 @@ def display_histograms(df: pd.DataFrame, selected_columns):
         plt.ylabel("Frequency")
         plt.title(f"Histogram of {column}")
         plt.xticks(rotation=90)
+
         st.pyplot(plt)
 
 
@@ -135,4 +151,5 @@ try:
 except CsvException as csv_exception:
     st.error(csv_exception)
 except Exception as err:
-    st.error("Something went wrong. Maybe non-numeric collumns? I havent really data-proofed this much")
+    st.error(
+        "Something went wrong. Maybe non-numeric collumns? I havent really data-proofed this much")
